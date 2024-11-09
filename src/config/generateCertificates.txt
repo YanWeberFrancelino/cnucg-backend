@@ -1,0 +1,44 @@
+import { exec } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+
+// Caminho para os certificados
+const certsDir = path.join(__dirname, '../../certs');
+const keyPath = path.join(certsDir, 'key.pem');
+const certPath = path.join(certsDir, 'cert.pem');
+
+// Função para executar comandos shell
+const execShellCommand = (cmd: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    exec(cmd, (error, stdout, stderr) => {
+      if (error) {
+        console.warn(error);
+        reject(stderr);
+      }
+      resolve(stdout ? stdout : stderr);
+    });
+  });
+};
+
+// Função para gerar certificados se não existirem
+const generateCertificates = async () => {
+  if (!fs.existsSync(certsDir)) {
+    fs.mkdirSync(certsDir);
+  }
+
+  if (!fs.existsSync(keyPath) || !fs.existsSync(certPath)) {
+    try {
+      console.log('Gerando certificados SSL...');
+      await execShellCommand(`
+        openssl req -x509 -newkey rsa:2048 -nodes -keyout ${keyPath} -out ${certPath} -days 365 -subj "/CN=localhost"
+      `);
+      console.log('Certificados gerados com sucesso.');
+    } catch (error) {
+      console.error('Erro ao gerar certificados:', error);
+    }
+  } else {
+    console.log('Os certificados já existem.');
+  }
+};
+
+generateCertificates();

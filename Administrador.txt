@@ -1,0 +1,15 @@
+SenhaAdministrador150906*
+
+$2a$10$JnFEwZGkcnUqrIl9CwMbwuacStKubw/xthPmoOKIMmhKG5JzeUSDK
+
+INSERT INTO usuarios (nome, email, senha, cpf, sexo, data_nascimento, endereco_logradouro, endereco_numero, endereco_complemento, endereco_cep, endereco_cidade, endereco_estado, endereco_bairro, rg, telefone, id_instituicao, status_validacao, administrador)
+VALUES ('Admin', 'admin@example.com', '$2a$10$Q9nM5eFLpVgQY8a4O8/5Kez8oH.5CcVfQ/Izf/euMghn7h8d1y8s2', '00000000000', 'masc', '1970-01-01', 'Rua Admin', '123', 'Apto 1', '00000000', 'Cidade Admin', 'ST', 'Bairro Admin', '00000000', '000000000', 1, 'aprovado', true);
+
+ "scripts": {
+    "generate-secrets": "ts-node src/config/generateSecrets.ts",
+    "ts-node": "nodemon src/index.ts",
+    "dev": "npm run generate-secrets && npm run ts-node",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "create-admin": "ts-node tests/CreateAdminUser.ts"  <-- Comando package.json, testes
+}

@@ -1,0 +1,10 @@
+package-lock.json
+dist/
+node_modules/
+
+uploads/*
+!uploads/.gitkeep
+!uploads/qrcodes
+
+uploads/qrcodes/*
+!uploads/qrcodes/.gitkeep
