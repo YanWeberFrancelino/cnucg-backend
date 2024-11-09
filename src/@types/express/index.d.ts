@@ -1,5 +1,3 @@
-// src/@types/express/index.d.ts
-
 import 'express';
 
 declare module 'express-serve-static-core' {
@@ -7,7 +5,7 @@ declare module 'express-serve-static-core' {
     id: number;
     nome: string;
     administrador: boolean;
-    tipo: 'INSTITUICAO' | 'PCD' | 'ADMIN'; // Inclui 'ADMIN'
+    tipo: 'INSTITUICAO' | 'PCD' | 'ADMIN'; 
   }
 
   interface Request {

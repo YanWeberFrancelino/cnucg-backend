@@ -1,19 +1,15 @@
-// src/middlewares/upload.ts
-
 import multer, { FileFilterCallback, StorageEngine } from 'multer';
 import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs';
 import { Request } from 'express';
 
-// Verificar se a pasta 'uploads' existe e criar se não existir
 const uploadsDir = path.join(__dirname, '../../uploads');
 
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Configuração do armazenamento
 const storage: StorageEngine = multer.diskStorage({
   destination: (req: Request, file: Express.Multer.File, cb) => {
     cb(null, uploadsDir);
@@ -25,7 +21,6 @@ const storage: StorageEngine = multer.diskStorage({
   }
 });
 
-// Filtro de arquivos
 const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
   if (!allowedTypes.includes(file.mimetype)) {
@@ -36,12 +31,10 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallb
   }
 };
 
-// Limites de tamanho
 const limits = {
-  fileSize: 5 * 1024 * 1024 // 5MB
+  fileSize: 5 * 1024 * 1024 
 };
 
-// Configuração do multer
 const upload = multer({
   storage,
   fileFilter,

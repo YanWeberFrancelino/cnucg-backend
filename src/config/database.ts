@@ -13,7 +13,6 @@ const pool = mysql.createPool({
     charset: 'utf8mb4'
 });
 
-// Testar conexão
 (async () => {
     try {
         const conn = await pool.getConnection();

@@ -1,5 +1,3 @@
-// src/controllers/carteira.ts
-
 import { Request, Response } from 'express';
 import pool from '../config/database';
 const QRCode: any = require('qrcode'); 
@@ -7,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import { RowDataPacket } from 'mysql2';
 
-// Função para gerar a carteira
 export const gerarCarteira = async (req: Request, res: Response) => {
   const userId = req.user?.id;
   const { idCao } = req.body;
@@ -47,7 +44,6 @@ export const gerarCarteira = async (req: Request, res: Response) => {
   }
 };
 
-// Função para buscar a carteira por ID do cão
 export const buscarCarteiraPorCao = async (req: Request, res: Response) => {
   const { idCao } = req.params;
 
@@ -70,7 +66,6 @@ export const buscarCarteiraPorCao = async (req: Request, res: Response) => {
   }
 };
 
-// Função para buscar a carteira pelo código
 export const buscarCarteiraPorCodigo = async (req: Request, res: Response) => {
   const { codigo } = req.params;
 
@@ -95,7 +90,7 @@ export const buscarCarteiraPorCodigo = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Carteira não encontrada.' });
     }
 
-    res.json(carteira[0]); // Envia a carteira encontrada, agora com todos os dados
+    res.json(carteira[0]); 
   } catch (error) {
     console.error('Erro ao buscar carteira:', error);
     res.status(500).json({ message: 'Erro ao buscar a carteira.' });

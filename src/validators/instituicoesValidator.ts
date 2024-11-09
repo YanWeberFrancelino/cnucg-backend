@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Função para limpar caracteres não numéricos
 const cleanNumberString = (value: string) => value.replace(/[^\d]/g, '');
 
 const institutionSchema = z.object({

@@ -1,5 +1,3 @@
-// src/validators/caesGuiaValidator.ts
-
 import { z } from 'zod';
 
 const caesGuiaSchema = z.object({

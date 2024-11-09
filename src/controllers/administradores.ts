@@ -6,7 +6,6 @@ import { RowDataPacket, OkPacket } from 'mysql2';
 const router = Router();
 router.use(adminMiddleware);
 
-// Promover usuário a administrador
 router.post('/promover/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -22,7 +21,6 @@ router.post('/promover/:id', async (req, res) => {
   }
 });
 
-// Rebaixar administrador a usuário comum
 router.post('/rebaixar/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -38,7 +36,6 @@ router.post('/rebaixar/:id', async (req, res) => {
   }
 });
 
-// Obter a lista de usuários e instituições por status de validação
 router.get('/listar/:tipo/:status', async (req, res) => {
   const { tipo, status } = req.params;
   let tableName;

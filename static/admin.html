@@ -192,7 +192,7 @@
         const result = await response.json();
         if (response.ok) {
           alert('Status atualizado com sucesso.');
-          document.getElementById('filterUserButton').click(); // Refresh the list
+          document.getElementById('filterUserButton').click();
         } else {
           alert(`Erro ao atualizar status. Motivo: ${result.message}`);
         }

@@ -2,14 +2,13 @@ import { Router, json, Request, Response } from 'express';
 import pool from '../config/database';
 import { RowDataPacket, OkPacket } from 'mysql2';
 import { userSchema } from '../validators/authValidator';
-import authMiddleware from '../middlewares/authMiddleware'; // Importar o middleware de autenticação
+import authMiddleware from '../middlewares/authMiddleware'; 
 
 const router = Router();
 router.use(json());
 
 const tableName = 'usuarios';
 
-// Obter os dados do usuário autenticado
 router.get('/me', authMiddleware, async (req: Request, res: Response) => {
   const userId = req.user?.id;
   if (!userId) {
@@ -20,14 +19,14 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
   try {
     conn = await pool.getConnection();
     const [rows]: [RowDataPacket[], any] = await conn.execute(
-      `SELECT * FROM ${tableName} WHERE id=? AND ativo=1`, // Corrigido para ativo=1
+      `SELECT * FROM ${tableName} WHERE id=? AND ativo=1`, 
       [userId]
     );
     if (rows.length <= 0) {
       return res.status(404).json({ message: 'Usuário não encontrado' });
     }
     const user = rows[0];
-    delete user.senha; // Remover a senha antes de enviar os dados
+    delete user.senha; 
     res.json(user);
   } catch (e) {
     console.error('Erro ao obter dados do usuário autenticado:', e);
@@ -37,7 +36,6 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-// Obter um usuário específico
 router.get('/:id', async (req: Request, res: Response) => {
   let conn;
   try {
@@ -59,7 +57,6 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// Inserir um novo usuário
 router.post('/', async (req: Request, res: Response) => {
   try {
     userSchema.parse(req.body);
@@ -72,7 +69,7 @@ router.post('/', async (req: Request, res: Response) => {
         `INSERT INTO ${tableName} (${insCols.join(", ")}) VALUES (${insCols.map(() => "?").join(", ")})`,
         values
       );
-      res.status(201).json(result); // Retornar 201 Created
+      res.status(201).json(result); 
     } catch (e) {
       console.error('Erro ao inserir usuário:', e);
       res.status(500).json(e);
@@ -85,13 +82,11 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// Excluir (inativar) um usuário específico
 router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
   let conn;
   try {
     conn = await pool.getConnection();
 
-    // Verificar se o usuário autenticado é o mesmo que está sendo excluído ou se é administrador
     if (req.user?.id !== parseInt(req.params.id) && !req.user?.administrador) {
       return res.status(403).json({ message: 'Permissão negada' });
     }
@@ -109,11 +104,9 @@ router.delete('/:id', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-// Atualizar um usuário específico
 router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
   const userId = req.params.id;
 
-  // Verificar se o usuário autenticado é o mesmo que está sendo atualizado ou se é administrador
   if (req.user?.id !== parseInt(userId) && !req.user?.administrador) {
     return res.status(403).json({ message: 'Permissão negada' });
   }
@@ -139,11 +132,8 @@ router.put('/:id', authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-
-// Atualizar o perfil do usuário autenticado
-// Atualizar o perfil do usuário autenticado
 router.put('/me', authMiddleware, async (req: Request, res: Response) => {
-  const userId = req.user?.id; // O ID do usuário autenticado, definido no middleware
+  const userId = req.user?.id; 
 
   if (!userId) {
     return res.status(401).json({ message: 'Usuário não autenticado' });
@@ -155,7 +145,6 @@ router.put('/me', authMiddleware, async (req: Request, res: Response) => {
   try {
     conn = await pool.getConnection();
 
-    // Verificar se o usuário ainda está ativo
     const [userRows]: [RowDataPacket[], any] = await conn.query(
       `SELECT * FROM ${tableName} WHERE id=? AND ativo=1`,
       [userId]
@@ -165,7 +154,6 @@ router.put('/me', authMiddleware, async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Usuário não encontrado ou inativo.' });
     }
 
-    // Atualizar os dados do usuário
     const query = `
       UPDATE ${tableName} 
       SET nome=?, email=?, cpf=?, sexo=?, data_nascimento=?, endereco_logradouro=?, endereco_numero=?, endereco_complemento=?, endereco_cep=?, endereco_cidade=?, endereco_estado=?, endereco_bairro=?, rg=?, telefone=? 

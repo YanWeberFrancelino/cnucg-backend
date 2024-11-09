@@ -1,5 +1,3 @@
-// src/index.ts
-
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -43,19 +41,18 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Configurações de segurança ajustadas
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'", "http://localhost:5500"],
         scriptSrc: ["'self'", "'unsafe-inline'", "http://localhost:5500"],
-        imgSrc: ["'self'", "http://localhost:5000", "data:"],  // Permitir imagens do servidor backend
+        imgSrc: ["'self'", "http://localhost:5000", "data:"], 
         objectSrc: ["'none'"],
         upgradeInsecureRequests: [],
       },
     },
-    crossOriginResourcePolicy: { policy: "cross-origin" }, // Garantir que a política permite origem cruzada
+    crossOriginResourcePolicy: { policy: "cross-origin" }, 
     referrerPolicy: { policy: 'no-referrer' },
     frameguard: { action: 'deny' },
     hsts: { maxAge: 60 * 60 * 24 * 365, includeSubDomains: true, preload: true },
@@ -71,7 +68,6 @@ app.use(cookieParser());
 app.use(morgan('combined'));
 app.use(rateLimiter);
 
-// Expor a pasta de uploads publicamente
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/', router);
 

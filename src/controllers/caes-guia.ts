@@ -14,12 +14,10 @@ router.use(authMiddleware);
 
 const uploadsDir = path.join(__dirname, '../../uploads');
 
-// Verificar se a pasta 'uploads' existe e criar se não existir
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Função para processar a imagem
 const processImage = async (file: Express.Multer.File): Promise<string | null> => {
   try {
     const originalPath = path.join(uploadsDir, file.filename);
@@ -56,7 +54,6 @@ const processImage = async (file: Express.Multer.File): Promise<string | null> =
   }
 };
 
-// Rota para criar um novo cão-guia
 router.post('/', upload.single('imagem'), async (req: Request, res: Response) => {
   try {
     const user = req.user;
@@ -138,7 +135,6 @@ router.post('/', upload.single('imagem'), async (req: Request, res: Response) =>
   }
 });
 
-// Rota para obter cães-guia do usuário autenticado
 router.get('/meus', async (req: Request, res: Response) => {
   try {
     const user = req.user;
@@ -166,7 +162,6 @@ router.get('/meus', async (req: Request, res: Response) => {
   }
 });
 
-// Rota para obter um cão-guia específico
 router.get('/:id', async (req: Request, res: Response) => {
   try {
     const user = req.user;
@@ -201,7 +196,6 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// Rota para atualizar um cão-guia específico
 router.put('/:id', upload.single('imagem'), async (req: Request, res: Response) => {
   try {
     const user = req.user;
@@ -211,7 +205,6 @@ router.put('/:id', upload.single('imagem'), async (req: Request, res: Response) 
       return res.status(401).json({ message: 'Usuário não autenticado' });
     }
 
-    // Obter o cão-guia existente
     let conn;
     try {
       conn = await pool.getConnection();
@@ -227,7 +220,6 @@ router.put('/:id', upload.single('imagem'), async (req: Request, res: Response) 
       const caoExistente = rows[0];
       conn.release();
 
-      // Validar os dados recebidos
       const validation = caesGuiaSchema.safeParse({ ...req.body, id_instituicao: caoExistente.id_instituicao, id_usuario: caoExistente.id_usuario });
       if (!validation.success) {
         const errorMessages = validation.error.errors.map(err => err.message).join(', ');
@@ -249,7 +241,6 @@ router.put('/:id', upload.single('imagem'), async (req: Request, res: Response) 
       if (req.file) {
         const processedImage = await processImage(req.file);
         if (processedImage) {
-          // Deletar a imagem antiga se existir
           if (imagemPath) {
             const oldImagePath = path.join(uploadsDir, imagemPath);
             if (fs.existsSync(oldImagePath)) {
@@ -262,7 +253,6 @@ router.put('/:id', upload.single('imagem'), async (req: Request, res: Response) 
         }
       }
 
-      // Atualizar no banco de dados
       conn = await pool.getConnection();
       const [result]: [OkPacket, any] = await conn.execute(
         `UPDATE caes_guia SET nome = ?, sexo = ?, cor = ?, data_nascimento = ?, raca = ?, numero_registro = ?, imagem = ? WHERE id = ? AND ativo = true AND (id_usuario = ? OR id_instituicao = ?)`,
@@ -285,7 +275,6 @@ router.put('/:id', upload.single('imagem'), async (req: Request, res: Response) 
   }
 });
 
-// Rota para inativar (deletar) um cão-guia específico
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const user = req.user;
@@ -298,7 +287,6 @@ router.delete('/:id', async (req: Request, res: Response) => {
     let conn;
     try {
       conn = await pool.getConnection();
-      // Obter o caminho da imagem associada ao cão-guia
       const [rows]: [RowDataPacket[], any] = await conn.execute(
         'SELECT imagem FROM caes_guia WHERE id = ? AND ativo = true AND (id_usuario = ? OR id_instituicao = ?)',
         [caoId, user.id, user.id]
@@ -310,13 +298,12 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
       const imagemPath = rows[0].imagem;
 
-      // Inativar o cão-guia
       const [result]: [OkPacket, any] = await conn.execute(
         'UPDATE caes_guia SET ativo = false WHERE id = ?',
         [caoId]
       );
 
-      // Deletar a imagem associada se existir
+      
       if (imagemPath) {
         const fullImagePath = path.join(uploadsDir, imagemPath);
         if (fs.existsSync(fullImagePath)) {

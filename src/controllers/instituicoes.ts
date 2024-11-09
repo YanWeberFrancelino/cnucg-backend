@@ -7,10 +7,8 @@ import authMiddleware from '../middlewares/authMiddleware';
 const router = Router();
 router.use(json());
 
-// Função para limpar os caracteres não numéricos
 const cleanNumberString = (value: string) => value.replace(/[^\d]/g, '');
 
-// Função para validar CNPJ
 const isValidCNPJ = (cnpj: string) => {
   cnpj = cleanNumberString(cnpj);
   if (cnpj.length !== 14) return false;
@@ -41,7 +39,6 @@ const isValidCNPJ = (cnpj: string) => {
   return true;
 };
 
-// Inserir uma nova instituição
 router.post('/', async (req, res) => {
   try {
     const parsedData = institutionSchema.parse(req.body);
@@ -54,7 +51,6 @@ router.post('/', async (req, res) => {
       'endereco_bairro', 'email', 'senha'
     ];
     
-    // Aqui ajustamos a tipagem de `parsedData`
     const values = insColsData.map((col) => (parsedData as Record<string, any>)[col]);
     
     let conn;
@@ -64,7 +60,7 @@ router.post('/', async (req, res) => {
         `INSERT INTO instituicoes (${insColsData.join(", ")}) VALUES (${insColsData.map(() => "?").join(", ")})`,
         values
       );
-      res.status(201).json(result); // Retornar 201 Created
+      res.status(201).json(result); 
     } catch (e) {
       console.error('Erro ao adicionar instituição:', e);
       res.status(500).json(e);
@@ -77,7 +73,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Adicionar rota para pesquisar instituições por CNPJ
 router.get('/search', async (req, res) => {
   const { query } = req.query;
 
@@ -101,14 +96,13 @@ router.get('/search', async (req, res) => {
       return res.status(404).json({ message: 'Nenhuma instituição encontrada com o CNPJ fornecido' });
     }
 
-    res.json(rows[0]); // Retorna a primeira instituição encontrada
+    res.json(rows[0]);
   } catch (e) {
     console.error('Erro ao pesquisar instituições:', e);
     res.status(500).json(e);
   }
 });
 
-// Obter dados da instituição autenticada
 router.get('/me', authMiddleware, async (req, res) => {
   const institutionId = req.user?.id;
 
@@ -138,7 +132,6 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
-// Atualizar dados da instituição autenticada
 router.put('/me', authMiddleware, async (req, res) => {
   const institutionId = req.user?.id;
 

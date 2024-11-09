@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { sanitizeInput } from '../utils/sanitize';
 
-// Função para limpar os caracteres não numéricos
 const cleanNumberString = (value: string) => value.replace(/[^\d]/g, '');
 
 const userSchema = z.object({
@@ -10,7 +9,7 @@ const userSchema = z.object({
   senha: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres').max(50, 'A senha deve ter no máximo 50 caracteres'),
   cpf: z.string().refine((val) => cleanNumberString(val).length === 11, {
     message: 'CPF deve conter exatamente 11 dígitos',
-  }).transform(cleanNumberString),  // Limpa a formatação antes de salvar
+  }).transform(cleanNumberString),  
   sexo: z.enum(["masc", "fem", "nao-bin"]),
   data_nascimento: z.string(),
   endereco_logradouro: z.string().transform(sanitizeInput),
@@ -18,7 +17,7 @@ const userSchema = z.object({
   endereco_complemento: z.string().nullable().transform(val => val ? sanitizeInput(val) : val),
   endereco_cep: z.string().refine((val) => cleanNumberString(val).length === 8, {
     message: 'CEP deve conter exatamente 8 dígitos',
-  }).transform(cleanNumberString),  // Limpa a formatação do CEP
+  }).transform(cleanNumberString),  
   endereco_cidade: z.string().transform(sanitizeInput),
   endereco_estado: z.string().length(2, 'Estado deve ter 2 caracteres').transform(sanitizeInput),
   endereco_bairro: z.string().transform(sanitizeInput),
@@ -27,8 +26,8 @@ const userSchema = z.object({
     return len >= 7 && len <= 14;
   }, {
     message: 'RG deve conter entre 7 e 14 dígitos',
-  }).transform(cleanNumberString),  // Limpa a formatação do RG
-  telefone: z.string().transform(cleanNumberString),  // Limpa a formatação do telefone
+  }).transform(cleanNumberString),  
+  telefone: z.string().transform(cleanNumberString), 
   id_instituicao: z.number().nullable().optional(),
 });
 

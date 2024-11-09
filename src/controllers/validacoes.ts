@@ -1,5 +1,3 @@
-// src/controllers/validacoes.ts
-
 import { Router } from 'express';
 import pool from '../config/database';
 import adminMiddleware from '../middlewares/adminMiddleware';
@@ -8,7 +6,6 @@ import { RowDataPacket } from 'mysql2';
 const router = Router();
 router.use(adminMiddleware);
 
-// Listar usuários ou instituições por status de validação
 router.get('/listar/:tipo/:status', async (req, res) => {
   const { tipo, status } = req.params;
   let tableName;
@@ -33,7 +30,6 @@ router.get('/listar/:tipo/:status', async (req, res) => {
   }
 });
 
-// Atualizar status de validação de usuários
 router.post('/validar-usuario/:id', async (req, res) => {
   const { id } = req.params;
   const { status, motivo_rejeicao } = req.body;
@@ -55,7 +51,6 @@ router.post('/validar-usuario/:id', async (req, res) => {
   }
 });
 
-// Atualizar status de validação de instituições
 router.post('/validar-instituicao/:id', async (req, res) => {
   const { id } = req.params;
   const { status, motivo_rejeicao } = req.body;
